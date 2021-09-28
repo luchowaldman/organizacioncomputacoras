@@ -7,24 +7,12 @@
 #define SIZE_PALABRA 80
 #define SIZE_TOTALPALABRAS 5000000
 
-int comparar(char* p1, char* p2)
-{
-	
-	
-            	char palabraVector1[strlen(p1) + 1];
-				char palabraVector2[strlen(p2) + 1];
-            	strcpy(palabraVector1, p1);
-            	strcpy(palabraVector2, p2);
-            	return strcmp(palabraVector1 , palabraVector2);
-            
-}
 
 
 void boublesort (char ** words, int arraysize)
 {
 	
-	int i, j;
-	
+    int i, j;
     for (i = 0; i < arraysize; i++) 
 		{
             
@@ -32,7 +20,7 @@ void boublesort (char ** words, int arraysize)
 			{
 				
             
-				if (comparar(words[i] , words[j]) > 0)
+				if (strcmp(words[i] , words[j]) > 0)
 				{
 					char* temp = words[i];
 					words[i] = words[j];
@@ -55,7 +43,7 @@ void shellsort(char ** arr, int num)
             for(k = j - i; k >= 0; k = k - i)
             {
             	
-                if (comparar(arr[k+i] , arr[k]) > 0)
+                if (strcmp(arr[k+i] , arr[k]) > 0)
                     break;
                 else
                 {
