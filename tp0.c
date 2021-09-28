@@ -7,85 +7,75 @@
 #define SIZE_PALABRA 80
 #define SIZE_TOTALPALABRAS 5000000
 
+int comparar(char* p1, char* p2)
+{
+	
+	
+            	char palabraVector1[strlen(p1) + 1];
+				char palabraVector2[strlen(p2) + 1];
+            	strcpy(palabraVector1, p1);
+            	strcpy(palabraVector2, p2);
+            	return strcmp(palabraVector1 , palabraVector2);
+            
+}
+
 
 void boublesort (char ** words, int arraysize)
 {
 	
-	int h, i, j;
+	int i, j;
 	
-	char* word;
-	char* word2;
-  
-    for (i = 0; i < arraysize - 1; i++) 
+    for (i = 0; i < arraysize; i++) 
 		{
-            word = words[i];
-            char palabraVecotr[strlen(word) + 1];
-            strcpy(palabraVecotr, word);
-            
             
             for (j = i + 1; j < arraysize;  j++) 
 			{
-            	word2 = words[j];
-				char palabraVecotr2[strlen(word2) + 1];
-            	strcpy(palabraVecotr2, word2);
+				
             
-				if (strcmp(palabraVecotr , palabraVecotr2) > 0)
+				if (comparar(words[i] , words[j]) > 0)
 				{
 					char* temp = words[i];
 					words[i] = words[j];
 					words[j] = temp;
 				}	
             }
-            words[j] = word;
         }
     
 }
 
 
 
-void shellsort (char ** words, int arraysize)
+void shellsort(char ** arr, int num)
 {
-	int h, i, j;
-	
-	char* word;
-	char* word2;
-    for (h = arraysize; h /= 2;) 
-	{
-        for (i = h; i < arraysize; i++) 
-		{
-            word = words[i];
-            
-            char palabraVecotr[strlen(word) + 1];
-            strcpy(palabraVecotr, word);
-            
-            
-            for (j = i; j >= h; j -= h) 
-			{
-            	word2 = words[j - h];
-            
-				char palabraVecotr2[strlen(word2) + 1];
-            	strcpy(palabraVecotr2, word2);
-            
-				if (strcmp(palabraVecotr , palabraVecotr2) > 0)
-					break;
-				
-				
-                words[j] = words[j - h];
+    int i, j, k;
+    for (i = num / 2; i > 0; i = i / 2)
+    {
+        for (j = i; j < num; j++)
+        {
+            for(k = j - i; k >= 0; k = k - i)
+            {
+            	
+                if (comparar(arr[k+i] , arr[k]) > 0)
+                    break;
+                else
+                {
+                    char* temp = arr[k];
+                    arr[k] = arr[k+i];
+                    arr[k+i] = temp;
+                }
             }
-            words[j] = word;
         }
     }
 }
-
-                    
+             
                     
 int main(int argc, char *argv[]) 
 {
 
 	char* argu;
-	
+	int finpalabra;
 	// QUEDA POR DEFAUL EL BOUBBLE SORT COMO MODO DE ORDENAMIENTO
-	char modo_ordenamiento = 'B';
+	char modo_ordenamiento = 'N';
 	
 	// Si tiene un argumento, lo guarda en argu. por default deja '-m'
 	if (argc < 2)
@@ -97,7 +87,7 @@ int main(int argc, char *argv[])
 		argu = argv[1];
 	}
 			
-			
+	// Muestra la ayuda		
 	if ((strcmp(argu, "-h") == 0) || (strcmp(argu, "--help") == 0))
 	{
 			
@@ -109,17 +99,24 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 	
-			
+	// Muestra la version		
 	if ((strcmp(argu, "-V") == 0) || (strcmp(argu, "--version") == 0))
 	{
 		printf("Version 1.0\n");
 		return 0;
 	}
 			
-			
+	// Metodo de ordenamiento Shel		
 	if ((strcmp(argu, "-s") == 0) || (strcmp(argu, "--sel") == 0))
 	{	
 		modo_ordenamiento = 'S';
+	}
+			
+			
+	// Metodo de ordenamiento Boubble
+	if ((strcmp(argu, "-m") == 0) || (strcmp(argu, "--bubble") == 0))
+	{	
+		modo_ordenamiento = 'B';
 	}
 		
 	
@@ -131,41 +128,55 @@ int main(int argc, char *argv[])
     int cant_letras = 0;
     
     
-	while (fgets(buffer, BUFFERSIZE , stdin) != NULL)
-    {
+    // LEE LAS PALABRAS DESDE EL ARCHIVO
+    FILE* fichero;
+	int file_prm = 2;
+	for (file_prm = 2; file_prm < argc; file_prm++)
+	{
+	    if ((fichero = fopen(argv[file_prm], "rt"))  == NULL)
+	        return;
+	    
+		    char letra;
+			while ((letra = fgetc(fichero)) != EOF)
+			{
+				
+						finpalabra = 0;
+		    			if (letra == ' ')
+		    				finpalabra = 1;
+		    			
+		    			if (letra == '\n') 
+		    				finpalabra = 1;
+		    			
+		    			
+		    			
+		    			if (finpalabra == 1)
+		    			{
+		    				if (cant_letras != 0)
+							{
 
-    	int c = 0;
-    	for (c = 0; c < BUFFERSIZE; c++)
-    		{
-    			int finpalabra = 0;
-    			
-    			if (buffer[c] == ' ')
-    				finpalabra = 1;
-    			
-    			if (buffer[c] == '\n') 
-    				finpalabra = 0;
-    			
-    			
-    			if (finpalabra == 1)
-    			{
-    				if (cant_letras != 0)
-					{
-	    				words[cant_palabras] = malloc(sizeof(char) * cant_letras);
-	    				strncpy(words[cant_palabras], palabra, cant_letras);
-						cant_letras = 0;
-	    				cant_palabras++;
-	    				
-					}
-				}
-				else
-				{
-					palabra[cant_letras] = buffer[c];
-					cant_letras++;
-				}
+
+								palabra[cant_letras] = '\0';
+								cant_letras++;
+			    				words[cant_palabras] = malloc(sizeof(char) * cant_letras);
+			    				strncpy(words[cant_palabras], palabra, cant_letras);
+								cant_letras = 0;
+			    				cant_palabras++;
+			    				
+							}
+						}
+						else
+						{
+							palabra[cant_letras] = letra;
+							cant_letras++;
+						}
 			}
+			
+		
+	    fclose(fichero);
+	    
+	    
 	}
-	
-	
+    
 	// Ordena Segun el Tipo
     if (modo_ordenamiento == 'B')
 		boublesort(words, cant_palabras);
@@ -178,8 +189,13 @@ int main(int argc, char *argv[])
     for (i = 0; i < cant_palabras; i++)
     {
     	printf("%s ", words[i]);
-    	free(words[i]);
 	}
+    for (i = 0; i < cant_palabras; i++)
+ 		free(words[i]);
+
+    	
+	
+	printf("\n");
 	free(words);
 	return 0;
 }
